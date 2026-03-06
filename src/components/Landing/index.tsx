@@ -7,34 +7,48 @@ import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
 import Counter from '../Counter/index';
+import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
 export default function Landing() {
     const landingRef = useRef<HTMLDivElement | null>(null);
-    const containerRef = useRef<HTMLDivElement | null>(null);
+    const darkContainerRef = useRef<HTMLDivElement | null>(null);
     const paraRef = useRef<HTMLParagraphElement | null>(null);
 
     useGSAP(() => {
-        if (!containerRef.current || !paraRef.current) return;
+        if (!darkContainerRef.current || !paraRef.current) return;
 
-        const tl = gsap.timeline();
-
-        tl.to(containerRef.current, {
-            height: "50vh",
-            duration: 1.2,
-            ease: "power2.out",
-        }).from(paraRef.current, {
-            opacity: 0,
-            duration: 0.5,
+        gsap.to(darkContainerRef.current, {
+            height: "50dvh",
             ease: "power2.inOut",
+            duration: 1.2,
+            delay: 0.3,
         });
+
+        const split = new SplitText(paraRef.current, {
+            type: "lines",
+            mask: "lines",
+            linesClass: styles.line,
+        });
+
+        gsap.from(split.lines, {
+            yPercent: 110,
+            duration: 1,
+            ease: "power3.out",
+            stagger: 0.12,
+            delay: 1.2,
+        });
+
     }, { scope: landingRef });
 
     return (
         <section className={styles.landing} ref={landingRef}>
-            <div className={styles.container} ref={containerRef}>
-                <p ref={paraRef}>Monitoring & Optimizing<br /> Sustainable Systems </p>
+            <div className={styles.darkContainer} ref={darkContainerRef}>
+                <Image src="/images/moss.jpg" alt="MOSS" fill />
+            </div>
+            <div className={styles.lightContainer}>
+                <h1 ref={paraRef}>Monitoring & Optimizing<br /> Sustainable Systems</h1>
             </div>
             <Counter />
         </section>
